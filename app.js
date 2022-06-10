@@ -11,9 +11,10 @@ switch(opcion) {
         console.log(concesionaria.buscarAuto(process.argv[3]));
         break;
     
-    // case "vender":
-    //     concesionaria.venderAuto(process.argv[3]);               cambiar el booleano en autos.js
-    //     break;
+    case "vender":
+        concesionaria.venderAuto(process.argv[3]);
+        console.log(`Auto ${process.argv[3]} vendido`);
+        break;
         
     case "enVenta":
         console.log(concesionaria.autosParaLaVenta());

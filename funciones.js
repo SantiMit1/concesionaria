@@ -1,11 +1,12 @@
-const autos = require("./autos")
-const fs = require("fs")
+const fs = require("fs");
+const autos = "./autos.json"
+let autosJSON = fs.readFileSync(autos, "utf-8");
+let autosJS = JSON.parse(autosJSON);
 
 let concesionaria = {
-   autos: autos,
- 
+
    buscarAuto: function(patente) {
-      let autosFiltrado = this.autos.filter(auto => {
+      let autosFiltrado = autosJS.filter(auto => {
         return auto.patente === patente;
       });
       autosFiltrado = autosFiltrado.pop();
@@ -17,18 +18,21 @@ let concesionaria = {
    },
 
    venderAuto: function(patente) {
+       let index = autosJS.map(auto => auto.patente).indexOf(patente);
        let auto = this.buscarAuto(patente);
        if(auto) {
            auto.vendido = true;
-           autos.push(auto);
-       }
-   },
+           autosJS.splice(index, 1);
+           autosJS.push(auto);
+           fs.writeFileSync(autos, JSON.stringify(autosJS));
+        }
+    },
 
    autosParaLaVenta: function() {
-       let autos = this.autos.filter(auto => {
+       let autos = autosJS.filter(auto => {
            return auto.vendido === false;
        })
-       return autos;
+       return autos.length > 0 ? autos : "No hay autos a la venta";
    },
 
    autosNuevos: function() {
@@ -40,14 +44,14 @@ let concesionaria = {
    },
 
    listaDeVentas: function() {
-       let autosVendidos = this.autos.filter(auto => {
+       let autosVendidos = autosJS.filter(auto => {
            return auto.vendido == true;
        })
        
        let lista = autosVendidos.map(auto => {
            return auto.precio;
        })
-       return lista.length > 0 ? lista : "no se vendió ningun auto"
+       return lista.length > 0 ? lista : "No se vendió ningun auto"
    },
 
    totalDeVentas: function() {
@@ -58,7 +62,7 @@ let concesionaria = {
            }, 0)
            return total;
        } else {
-           return 0;
+           return "No se vendió ningun auto";
        }
    },
 
@@ -81,7 +85,7 @@ let concesionaria = {
                 autosComprables.push(auto);
            }
        })
-       return autosComprables;
+       return autosComprables.length > 0 ? autosComprables : "La persona no puede comprar ningun auto"
    }
 }
 
